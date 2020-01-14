@@ -21,13 +21,8 @@ const indexRoutes       = require("./routes/index");
 //mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true });
 
 //mongoose for mongodb atlast
-const MongoClient = require('mongodb').MongoClient;
-const uri = "mongodb+srv://omerYelpCamp:<password>@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority";
-const client = new MongoClient(uri, { useNewUrlParser: true });
-client.connect(err => {
-  const collection = client.db("test").collection("devices");
-  // perform actions on the collection object
-  client.close();
+mongoose.connect("mongodb+srv://omerYelpCamp:Oo123456@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority", {
+    useNewUrlParser: true
 });
 
 app.use(bodyParser.urlencoded({extended: true}));

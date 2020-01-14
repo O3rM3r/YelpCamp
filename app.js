@@ -22,7 +22,8 @@ const indexRoutes       = require("./routes/index");
 
 //mongoose for mongodb atlast
 mongoose.connect("mongodb+srv://omerYelpCamp:Oo123456@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority", {
-    useNewUrlParser: true
+    useNewUrlParser: true,
+    useUnifiedTopology: true
 });
 
 app.use(bodyParser.urlencoded({extended: true}));

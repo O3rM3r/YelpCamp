@@ -17,14 +17,16 @@ const campgroundRoutes  = require("./routes/campgrounds");
 const commentRoutes     = require("./routes/comments");
 const indexRoutes       = require("./routes/index");
 
-//mongoose for local mongodb
-//mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true });
+//mongoose for local mongodb, defined the localhost to be DATABASEURL ($export = DATABASEURL=mongodb://localhost:27017/yelp_camp)
+//mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true, useUnifiedTopology: true }); //no need for this
 
-//mongoose for mongodb atlast
-mongoose.connect("mongodb+srv://omerYelpCamp:Oo123456@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority", {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
+//mongoose for mongodb atlas, deinfed to be DATABASEURL for heroku
+//password replace with actual password
+// mongoose.connect("mongodb+srv://omerYelpCamp:<password>@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
+
+//environment variable for db
+//good to hide the password when uploading the project publicly
+mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");

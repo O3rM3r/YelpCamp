@@ -17,6 +17,7 @@ const campgroundRoutes  = require("./routes/campgrounds");
 const commentRoutes     = require("./routes/comments");
 const indexRoutes       = require("./routes/index");
 
+//=====mongodb config==========
 //mongoose for local mongodb, defined the localhost to be DATABASEURL ($export = DATABASEURL=mongodb://localhost:27017/yelp_camp)
 //mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true, useUnifiedTopology: true }); //no need for this
 
@@ -26,7 +27,9 @@ const indexRoutes       = require("./routes/index");
 
 //environment variable for db
 //good to hide the password when uploading the project publicly
-mongoose.connect(process.env.DATABASEURL, { useNewUrlParser: true, useUnifiedTopology: true });
+//after the || is the default route in case it can't find a predefined one
+var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");

@@ -9,7 +9,7 @@ const Campground    = require("./models/campground");
 const Comment       = require("./models/comment");
 const User          = require("./models/user");
 const seedDB        = require("./seeds");
-const app             = express();
+const app           = express();
 
 
 //requiring routes
@@ -37,6 +37,8 @@ app.use(express.static(__dirname + "/public"))
 app.use(methodOverride("_method"));
 app.use(flash());
 //seedDB(); //deletes all campgrounds and comments, and enters 3 new ones
+
+app.locals.moment = require('moment'); //momentJS
 
 //Passport config
 app.use(require("express-session")({

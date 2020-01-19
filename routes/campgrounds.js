@@ -7,13 +7,29 @@ const middleware    = require('../middleware'); //automatically requires 'index.
 //show all campgrounds
 router.get("/", (req,res) => {
     //Get all campgrounds from DB
-    Campground.find({}, (err,allCampgrounds) => {
-        if(err){
-            console.log(err);
-        } else {
-            res.render("campgrounds/index", {campgrounds:allCampgrounds, page: 'campgrounds'});
-        }
-    });
+    if(req.query.search){
+        const regex = new RegExp(escapeRegex(req.query.search), 'gi');
+        Campground.find({$or:[{name: regex},{"author.username":regex}]}, (err,allCampgrounds) => {
+            if(err){
+                console.log(err);
+            } else {
+                if(allCampgrounds.length < 1){
+                    req.flash('error', 'Campground not found');
+                    res.redirect("back");
+                } else {
+                    res.render("campgrounds/index", {campgrounds:allCampgrounds, page: 'campgrounds'});
+                }
+            }
+        });
+    } else {
+        Campground.find({}, (err,allCampgrounds) => {
+            if(err){
+                console.log(err);
+            } else {
+                res.render("campgrounds/index", {campgrounds:allCampgrounds, page: 'campgrounds'});
+            }
+        });
+    }
 });
 
 //create new campground to db
@@ -94,5 +110,9 @@ router.delete("/:id", middleware.checkCampgroundOwnership, (req,res) => {
     });
 });
 
+//making the campground search query a "fuzzy search", matching anything similar
+function escapeRegex(text){
+    return text.replace(/[-[\]{}()*+?.,\\^$|#\s]/g,"\\$&");
+}
 
 module.exports = router;

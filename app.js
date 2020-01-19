@@ -1,3 +1,5 @@
+require('dotenv').config();
+
 const express       = require('express');
 const bodyParser    = require('body-parser');
 const mongoose      = require('mongoose');
@@ -29,7 +31,7 @@ const indexRoutes       = require("./routes/index");
 //good to hide the password when uploading the project publicly
 //after the || is the default route in case it can't find a predefined one
 var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
-mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");

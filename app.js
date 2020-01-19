@@ -1,34 +1,33 @@
 require('dotenv').config();
 
-const express       = require('express');
-const bodyParser    = require('body-parser');
-const mongoose      = require('mongoose');
-const flash         = require('connect-flash');
-const passport      = require('passport');
-const LocalStrategy = require('passport-local');
+const express        = require('express');
+const bodyParser     = require('body-parser');
+const mongoose       = require('mongoose');
+const flash          = require('connect-flash'); //showing flash alert messages
+const passport       = require('passport');
+const LocalStrategy  = require('passport-local');
 const methodOverride = require('method-override');
-const Campground    = require("./models/campground");
-const Comment       = require("./models/comment");
-const User          = require("./models/user");
-const seedDB        = require("./seeds");
-const app           = express();
-
+const Campground     = require("./models/campground");
+const Comment        = require("./models/comment");
+const User           = require("./models/user");
+const seedDB         = require("./seeds");
+const app            = express();
 
 //requiring routes
 const campgroundRoutes  = require("./routes/campgrounds");
 const commentRoutes     = require("./routes/comments");
 const indexRoutes       = require("./routes/index");
 
+
 //=====mongodb config==========
 //mongoose for local mongodb, defined the localhost to be DATABASEURL ($export = DATABASEURL=mongodb://localhost:27017/yelp_camp)
 //mongoose.connect("mongodb://localhost:27017/yelp_camp", { useNewUrlParser: true, useUnifiedTopology: true }); //no need for this
 
-//mongoose for mongodb atlas, deinfed to be DATABASEURL for heroku
+//mongoose for mongodb atlas, defined to be DATABASEURL for heroku
 //password replace with actual password
 // mongoose.connect("mongodb+srv://omerYelpCamp:<password>@yelpcamp-mxf5f.mongodb.net/test?retryWrites=true&w=majority", {useNewUrlParser: true, useUnifiedTopology: true});
 
-//environment variable for db
-//good to hide the password when uploading the project publicly
+//MUST hide the password when uploading the project publicly using environment variables
 //after the || is the default route in case it can't find a predefined one
 var url = process.env.DATABASEURL || "mongodb://localhost:27017/yelp_camp";
 mongoose.connect(url, { useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex: true });

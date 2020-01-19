@@ -3,6 +3,32 @@ const router        = express.Router();
 const Campground    = require("../models/campground");
 const Comment       = require('../models/comment');
 const middleware    = require('../middleware'); //automatically requires 'index.js'
+const multer        = require('multer'); //uploading img
+const cloudinary    = require('cloudinary'); //storing images API
+
+//==========configuring image upload==========
+//creating a custom file name using the current date using Date.now() and the original file's name
+let storage = multer.diskStorage({
+    filename: (req, file, callback) => {
+        callback(null, Date.now() + file.originalname);
+    }
+});
+//making sure file extension is an image
+let imageFilter = (req, file, cb)=>{
+    //accept image files only
+    if (!file.originalname.match(/\.(jpg|jpeg|png|gif)$/i)){
+        return cb(new Error('Only image files are allowed!'), false);
+    }
+    cb(null, true)
+};
+//the variable we upload
+let upload = multer({storage: storage, fileFilter: imageFilter})
+//cloudinary configuring
+cloudinary.config({
+    cloud_name: 'omerma',
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
+});
 
 //show all campgrounds
 router.get("/", (req,res) => {
@@ -33,24 +59,26 @@ router.get("/", (req,res) => {
 });
 
 //create new campground to db
-router.post("/", middleware.isLoggedIn, (req, res) => {
-    const name = req.body.name;
-    const price = req.body.price;
-    const image = req.body.image;
-    const desc = req.body.description;
-    const author = {
-        id: req.user._id,
-        username: req.user.username
-    }
-    const newCampground = {name:name, price:price, image:image, description:desc, author:author};
-// Creat new campground and save to DB
-    Campground.create(newCampground, (err,newlyCreated) => {
-        if(err){
-            console.log(err);
-        } else {
-            console.log(newlyCreated);
-            res.redirect("/campgrounds");
+router.post("/", middleware.isLoggedIn, upload.single('image'), (req, res) => {
+    cloudinary.uploader.upload(req.file.path, (result)=>{
+        //adding cloudinary url for img to cmpgrnd obj under img property
+        req.body.campground.image = result.secure_url;
+        //add author to campground
+        req.body.campground.author = {
+            id: req.user._id,
+            username: req.user.username
         }
+        //Creat new campground and save to DB
+        //we can use req.body.campground instead of defining each property of the object because we used campground[xxx] in the form names
+        Campground.create(req.body.campground, (err,newlyCreated) => {
+            if(err){
+                console.log(err);
+                req.flash('error', err.message);
+                return res.redirect('back');
+            }
+            console.log(newlyCreated);
+            res.redirect("/campgrounds/" + newlyCreated.id);
+        });
     });
 });
 
